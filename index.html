@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Function Signature Builder</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+    <style>
+        :root { --brand: #b87352; /* Matching that logo copper color */ }
+        body { font-family: 'Montserrat', sans-serif; background: #f0f2f5; display: flex; justify-content: center; padding: 20px; }
+        .card { background: white; padding: 40px; border-radius: 12px; box-shadow: 0 10px 25px rgba(0,0,0,0.05); width: 450px; }
+        h2 { margin-top: 0; font-size: 24px; color: #333; }
+        label { font-size: 11px; font-weight: bold; color: #888; text-transform: uppercase; letter-spacing: 1px; display: block; margin-top: 20px; }
+        input { width: 100%; padding: 12px; margin: 8px 0 0 0; border: 1px solid #ddd; border-radius: 6px; box-sizing: border-box; font-family: 'Montserrat', sans-serif; font-size: 14px; }
+        #preview-container { padding: 25px; border: 1px solid #f0f0f0; border-radius: 8px; margin: 30px 0; background: #ffffff; min-height: 100px; }
+        button { background: #333; color: white; border: none; padding: 15px; border-radius: 6px; cursor: pointer; width: 100%; font-size: 16px; font-weight: 600; font-family: 'Montserrat', sans-serif; transition: 0.2s; }
+        button:hover { background: #000; }
+        .success { background: #28a745 !important; }
+    </style>
+</head>
+<body>
+
+<div class="card">
+    <h2>Signature Builder</h2>
+    
+    <label>Full Name</label>
+    <input type="text" id="name" placeholder="Ryan Sheehan" oninput="update()">
+    
+    <label>Job Title</label>
+    <input type="text" id="title" placeholder="IT Engineer" oninput="update()">
+
+    <div id="preview-container">
+        <table id="sig-table" cellspacing="0" cellpadding="0" border="0" style="font-family: 'Montserrat', Arial, sans-serif; line-height: 1.4; color: #444444;">
+            <tr>
+                <td>
+                    <div id="out-name" style="font-size: 14px; font-weight: 700; color: #444444; margin-bottom: 2px;">Ryan Sheehan</div>
+                    <div id="out-title" style="font-size: 14px; font-style: italic; font-weight: 400; color: #666666; margin-bottom: 12px;">IT Engineer</div>
+                    <div style="padding-top: 2px;">
+                        <img src="https://i.imgur.com/UMQfNpr.png" width="200" height="41" style="display: block; border: 0; width: 200px; height: 41px;" alt="Function Logo">
+                    </div>
+                </td>
+            </tr>
+        </table>
+    </div>
+
+    <button id="copyBtn" onclick="copySig()">Copy for Gmail</button>
+</div>
+
+<script>
+    function update() {
+        document.getElementById('out-name').innerText = document.getElementById('name').value || "Ryan Sheehan";
+        document.getElementById('out-title').innerText = document.getElementById('title').value || "IT Engineer";
+    }
+
+    async function copySig() {
+        const el = document.getElementById('sig-table');
+        const btn = document.getElementById('copyBtn');
+        try {
+            const blobHtml = new Blob([el.outerHTML], { type: 'text/html' });
+            const blobText = new Blob([el.innerText], { type: 'text/plain' });
+            const data = [new ClipboardItem({ 'text/html': blobHtml, 'text/plain': blobText })];
+            await navigator.clipboard.write(data);
+            
+            btn.innerText = "✅ COPIED";
+            btn.classList.add('success');
+            setTimeout(() => { 
+                btn.innerText = "Copy for Gmail"; 
+                btn.classList.remove('success'); 
+            }, 2000);
+        } catch (e) {
+            alert("Error copying. Please use Chrome or Safari.");
+        }
+    }
+</script>
+</body>
+</html>
